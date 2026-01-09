@@ -1,4 +1,6 @@
 # 🎧 SongSnap 
+🎮 Play here: [SongSnap](https://revati-n.github.io/SongSnap/)
+
 
 SongSnap is a fast-paced music guessing game where you try to identify songs from very short audio snippets.
 
