@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SongSnap - Music Guessing Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1DB954;
+            --secondary-color: #191414;
+            --accent-color: #1ed760;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --bg-dark: #121212;
+            --bg-darker: #0f0f0f;
+            --success: #1DB954;
+            --error: #e74c3c;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, #1a1a1a 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(18, 18, 18, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(29, 185, 84, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .login-section {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .login-section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--secondary-color);
+            border: none;
+            padding: 14px 40px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(29, 185, 84, 0.3);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(29, 185, 84, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .game-section {
+            display: none;
+        }
+
+        .score-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(29, 185, 84, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(29, 185, 84, 0.3);
+        }
+
+        .score-box {
+            text-align: center;
+        }
+
+        .score-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .score-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .round-indicator {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .round-indicator strong {
+            color: var(--accent-color);
+        }
+
+        .player-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(29, 185, 84, 0.2);
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .album-art {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            overflow: hidden;
+        }
+
+        .album-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .song-info {
+            flex: 1;
+        }
+
+        .song-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .song-artist {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .audio-control {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 10px 15px;
+            background: rgba(29, 185, 84, 0.2);
+            border: 1px solid rgba(29, 185, 84, 0.4);
+            color: var(--accent-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(29, 185, 84, 0.3);
+            border-color: rgba(29, 185, 84, 0.6);
+        }
+
+        .control-btn.active {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            border-color: var(--primary-color);
+        }
+
+        .audio-display {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .listening-text {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .current-duration {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .choices-section {
+            margin-bottom: 30px;
+        }
+
+        .choices-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .choices-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .choices-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .choice-btn {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(29, 185, 84, 0.2);
+            color: var(--text-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .choice-btn:hover:not(.disabled) {
+            background: rgba(29, 185, 84, 0.1);
+            border-color: rgba(29, 185, 84, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .choice-btn.selected {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--secondary-color);
+        }
+
+        .choice-btn.correct {
+            background: var(--success);
+            border-color: var(--success);
+            color: var(--secondary-color);
+        }
+
+        .choice-btn.wrong {
+            background: var(--error);
+            border-color: var(--error);
+            color: white;
+        }
+
+        .choice-btn.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .choice-song {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .choice-artist {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--secondary-color);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(29, 185, 84, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(29, 185, 84, 0.2);
+            color: var(--accent-color);
+            border: 1px solid rgba(29, 185, 84, 0.4);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(29, 185, 84, 0.3);
+            border-color: rgba(29, 185, 84, 0.6);
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: rgba(29, 185, 84, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(29, 185, 84, 0.3);
+        }
+
+        .message.error {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(29, 185, 84, 0.2);
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .end-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .end-screen h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+        }
+
+        .final-score {
+            font-size: 56px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .end-message {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: rgba(29, 185, 84, 0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .logout-btn {
+            padding: 6px 16px;
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--error);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(231, 76, 60, 0.3);
+            border-color: rgba(231, 76, 60, 0.5);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+
+            .score-section {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .score-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎵</div>
+            <h1 class="title">SongSnap</h1>
+            <p class="subtitle">Guess the song before the beat drops!</p>
+        </div>
+
+        <!-- Login Section -->
+        <div id="loginSection" class="login-section">
+            <h2>Ready to Play?</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 25px; font-size: 14px;">
+                Connect your Spotify account to start guessing songs
+            </p>
+            <button class="login-btn" id="loginBtn">Login with Spotify</button>
+        </div>
+
+        <!-- Game Section -->
+        <div id="gameSection" class="game-section">
+            <!-- User Info -->
+            <div class="user-info">
+                <div>
+                    <span class="user-name" id="userName"></span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+
+            <!-- Score Section -->
+            <div class="score-section">
+                <div class="score-box">
+                    <div class="score-label">Your Score</div>
+                    <div class="score-value" id="scoreDisplay">0</div>
+                </div>
+                <div class="score-box" style="text-align: center;">
+                    <div class="round-indicator">
+                        Round <strong id="roundNumber">1</strong> of <strong>4</strong>
+                    </div>
+                </div>
+                <div class="score-box">
+                    <div class="score-label">Time Allowed</div>
+                    <div class="score-value" id="timeDisplay" style="color: var(--text-secondary);">--</div>
+                </div>
+            </div>
+
+            <!-- Loading Section -->
+            <div id="loadingSection" class="loading">
+                <div class="spinner"></div>
+                <div class="loading-text">Loading your top tracks...</div>
+            </div>
+
+            <!-- Player Section -->
+            <div id="playerSection" class="player-section hidden">
+                <div class="player-header">
+                    <div class="album-art" id="albumArt">
+                        🎵
+                    </div>
+                    <div class="song-info">
+                        <div class="song-title" id="songTitle">Song Name</div>
+                        <div class="song-artist" id="songArtist">Artist Name</div>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalTime">0:30</span>
+                </div>
+
+                <div class="audio-control">
+                    <button class="control-btn" id="playBtn">▶ Play</button>
+                    <button class="control-btn" id="pauseBtn">⏸ Pause</button>
+                    <button class="control-btn" id="replayBtn">↻ Replay</button>
+                </div>
+
+                <div class="audio-display">
+                    <div class="listening-text">Listen to the preview for:</div>
+                    <div class="current-duration" id="durationDisplay">1 second</div>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div id="messageContainer"></div>
+
+            <!-- Choices Section -->
+            <div id="choicesSection" class="choices-section hidden">
+                <div class="choices-label">Who's performing this track?</div>
+                <div class="choices-grid" id="choicesGrid"></div>
+                <div class="action-buttons">
+                    <button class="action-btn btn-secondary" id="skipBtn">Skip Song</button>
+                    <button class="action-btn btn-primary" id="nextRoundBtn" disabled>Next Round</button>
+                </div>
+            </div>
+
+            <!-- End Screen -->
+            <div id="endScreen" class="end-screen hidden">
+                <h2>Game Complete! 🎉</h2>
+                <div class="final-score" id="finalScore">0</div>
+                <div class="end-message" id="endMessage">You did awesome!</div>
+                <div class="action-buttons">
+                    <button class="action-btn btn-primary" id="playAgainBtn">Play Again</button>
+                    <button class="action-btn btn-secondary" id="logoutBtn2">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="audioPlayer"></audio>
+
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        const CLIENT_ID = '789244d326c143f9b6a28ac5c140d22f'; // Replace with your Spotify Client ID
+        const REDIRECT_URI = window.location.origin + window.location.pathname;
+        const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
+        const API_ENDPOINT = 'https://api.spotify.com/v1';
+        
+        const SCOPES = [
+            'user-read-private',
+            'user-read-email',
+            'user-top-read'
+        ];
+
+        const GAME_ROUNDS = [
+            { duration: 1, points: 100 },
+            { duration: 3, points: 33 },
+            { duration: 5, points: 20 },
+            { duration: 10, points: 10 }
+        ];
+
+        const NUM_CHOICES = 4;
+
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        let gameState = {
+            accessToken: null,
+            user: null,
+            topTracks: [],
+            currentRound: 0,
+            currentSongIndex: 0,
+            currentChoices: [],
+            correctAnswerIndex: 0,
+            score: 0,
+            currentDuration: 0,
+            answered: false,
+            gameOver: false
+        };
+
+        // ============================================
+        // SPOTIFY AUTHENTICATION
+        // ============================================
+        function getAuthUrl() {
+            const params = new URLSearchParams({
+                client_id: CLIENT_ID,
+                response_type: 'code',
+                redirect_uri: REDIRECT_URI,
+                scope: SCOPES.join(' ')
+            });
+            return `${AUTH_ENDPOINT}?${params.toString()}`;
+        }
+
+        async function exchangeCodeForToken(code) {
+            try {
+                const response = await fetch('https://accounts.spotify.com/api/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        grant_type: 'authorization_code',
+                        code: code,
+                        redirect_uri: REDIRECT_URI,
+                        client_id: CLIENT_ID
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to exchange code for token');
+                }
+
+                const data = await response.json();
+                return data.access_token;
+            } catch (error) {
+                console.error('Auth error:', error);
+                throw error;
+            }
+        }
+
+        async function getUserProfile() {
+            const response = await fetch(`${API_ENDPOINT}/me`, {
+                headers: { 'Authorization': `Bearer ${gameState.accessToken}` }
+            });
+            return response.json();
+        }
+
+        async function getUserTopTracks() {
+            const response = await fetch(`${API_ENDPOINT}/me/top/tracks?limit=50`, {
+                headers: { 'Authorization': `Bearer ${gameState.accessToken}` }
+            });
+            const data = await response.json();
+            
+            // Filter tracks that have preview URLs
+            return data.items.filter(track => track.preview_url);
+        }
+
+        // ============================================
+        // GAME LOGIC
+        // ============================================
+        function startGame() {
+            gameState.currentRound = 0;
+            gameState.currentSongIndex = 0;
+            gameState.score = 0;
+            gameState.gameOver = false;
+            gameState.answered = false;
+
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('gameSection').classList.remove('hidden');
+            document.getElementById('loadingSection').classList.remove('hidden');
+            document.getElementById('playerSection').classList.add('hidden');
+            document.getElementById('choicesSection').classList.add('hidden');
+            document.getElementById('endScreen').classList.add('hidden');
+            document.getElementById('messageContainer').innerHTML = '';
+
+            loadNextRound();
+        }
+
+        function loadNextRound() {
+            if (gameState.currentRound >= GAME_ROUNDS.length) {
+                endGame();
+                return;
+            }
+
+            gameState.currentDuration = GAME_ROUNDS[gameState.currentRound].duration;
+            gameState.answered = false;
+
+            document.getElementById('roundNumber').textContent = gameState.currentRound + 1;
+            document.getElementById('timeDisplay').textContent = gameState.currentDuration + 's';
+            document.getElementById('durationDisplay').textContent = gameState.currentDuration + ' second' + (gameState.currentDuration > 1 ? 's' : '');
+            document.getElementById('nextRoundBtn').disabled = true;
+
+            loadSong();
+        }
+
+        function loadSong() {
+            if (gameState.currentSongIndex >= gameState.topTracks.length) {
+                endGame();
+                return;
+            }
+
+            const track = gameState.topTracks[gameState.currentSongIndex];
+            
+            document.getElementById('songTitle').textContent = track.name;
+            document.getElementById('songArtist').textContent = track.artists[0].name;
+            
+            if (track.album.images[0]) {
+                const albumImg = document.createElement('img');
+                albumImg.src = track.album.images[0].url;
+                document.getElementById('albumArt').innerHTML = '';
+                document.getElementById('albumArt').appendChild(albumImg);
+            }
+
+            const audio = document.getElementById('audioPlayer');
+            audio.src = track.preview_url;
+            audio.currentTime = 0;
+
+            setupChoices();
+            document.getElementById('loadingSection').classList.add('hidden');
+            document.getElementById('playerSection').classList.remove('hidden');
+            document.getElementById('choicesSection').classList.remove('hidden');
+            document.getElementById('messageContainer').innerHTML = '';
+        }
+
+        function setupChoices() {
+            const correctTrack = gameState.topTracks[gameState.currentSongIndex];
+            gameState.correctAnswerIndex = Math.floor(Math.random() * NUM_CHOICES);
+            gameState.currentChoices = [];
+
+            // Add correct answer at random position
+            gameState.currentChoices[gameState.correctAnswerIndex] = correctTrack;
+
+            // Add random incorrect choices
+            let addedIndexes = new Set([gameState.currentSongIndex]);
+            for (let i = 0; i < NUM_CHOICES; i++) {
+                if (i === gameState.correctAnswerIndex) continue;
+
+                let randomIndex;
+                do {
+                    randomIndex = Math.floor(Math.random() * gameState.topTracks.length);
+                } while (addedIndexes.has(randomIndex));
+
+                gameState.currentChoices[i] = gameState.topTracks[randomIndex];
+                addedIndexes.add(randomIndex);
+            }
+
+            // Render choices
+            const choicesGrid = document.getElementById('choicesGrid');
+            choicesGrid.innerHTML = '';
+
+            gameState.currentChoices.forEach((track, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-btn';
+                btn.innerHTML = `
+                    <span class="choice-song">${track.name}</span>
+                    <span class="choice-artist">${track.artists[0].name}</span>
+                `;
+                
+                btn.addEventListener('click', () => selectAnswer(index));
+                choicesGrid.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(choiceIndex) {
+            if (gameState.answered) return;
+
+            gameState.answered = true;
+            const audio = document.getElementById('audioPlayer');
+            audio.pause();
+
+            const choiceBtns = document.querySelectorAll('.choice-btn');
+            choiceBtns.forEach((btn, idx) => {
+                btn.classList.add('disabled');
+                if (idx === gameState.correctAnswerIndex) {
+                    btn.classList.add('correct');
+                } else if (idx === choiceIndex) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            let messageDiv = document.getElementById('messageContainer');
+            if (choiceIndex === gameState.correctAnswerIndex) {
+                const points = GAME_ROUNDS[gameState.currentRound].points;
+                gameState.score += points;
+                messageDiv.innerHTML = `<div class="message success">✓ Correct! +${points} points</div>`;
+            } else {
+                messageDiv.innerHTML = `<div class="message error">✗ Wrong! That was ${gameState.currentChoices[gameState.correctAnswerIndex].name}</div>`;
+            }
+
+            document.getElementById('scoreDisplay').textContent = gameState.score;
+            document.getElementById('nextRoundBtn').disabled = false;
+        }
+
+        function nextRound() {
+            gameState.currentRound++;
+            gameState.currentSongIndex++;
+            loadNextRound();
+        }
+
+        function skipSong() {
+            gameState.currentSongIndex++;
+            loadSong();
+        }
+
+        function playAudio() {
+            const audio = document.getElementById('audioPlayer');
+            let elapsed = 0;
+            
+            audio.play().catch(err => {
+                console.error('Playback error:', err);
+                showMessage('Audio playback failed. Try another song.', 'error');
+            });
+
+            const interval = setInterval(() => {
+                elapsed += 100;
+                const progress = (audio.currentTime / gameState.currentDuration) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+                document.getElementById('currentTime').textContent = formatTime(audio.currentTime);
+
+                if (elapsed >= gameState.currentDuration * 1000 || audio.paused) {
+                    clearInterval(interval);
+                    audio.pause();
+                    document.getElementById('progressFill').style.width = '0%';
+                    document.getElementById('currentTime').textContent = '0:00';
+                }
+            }, 100);
+        }
+
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function endGame() {
+            gameState.gameOver = true;
+            document.getElementById('playerSection').classList.add('hidden');
+            document.getElementById('choicesSection').classList.add('hidden');
+            document.getElementById('endScreen').classList.remove('hidden');
+            document.getElementById('finalScore').textContent = gameState.score;
+            
+            const maxScore = GAME_ROUNDS.reduce((sum, r) => sum + r.points, 0) * Math.min(gameState.topTracks.length, GAME_ROUNDS.length);
+            let message = 'You did awesome!';
+            if (gameState.score >= maxScore * 0.8) {
+                message = 'Outstanding! You really know your music! 🌟';
+            } else if (gameState.score >= maxScore * 0.5) {
+                message = 'Great job! You got some good ones! 🎉';
+            } else if (gameState.score > 0) {
+                message = 'Nice try! Keep playing to improve! 💪';
+            } else {
+                message = 'Don\'t give up! Try again! 🎵';
+            }
+            document.getElementById('endMessage').textContent = message;
+        }
+
+        function logout() {
+            gameState.accessToken = null;
+            gameState.user = null;
+            gameState.topTracks = [];
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('gameSection').classList.add('hidden');
+        }
+
+        function showMessage(text, type) {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = `<div class="message ${type}">${text}</div>`;
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            window.location.href = getAuthUrl();
+        });
+
+        document.getElementById('playBtn').addEventListener('click', playAudio);
+        
+        document.getElementById('pauseBtn').addEventListener('click', () => {
+            document.getElementById('audioPlayer').pause();
+        });
+
+        document.getElementById('replayBtn').addEventListener('click', () => {
+            const audio = document.getElementById('audioPlayer');
+            audio.currentTime = 0;
+            playAudio();
+        });
+
+        document.getElementById('nextRoundBtn').addEventListener('click', nextRound);
+        document.getElementById('skipBtn').addEventListener('click', skipSong);
+        document.getElementById('playAgainBtn').addEventListener('click', startGame);
+        
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+        document.getElementById('logoutBtn2').addEventListener('click', logout);
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        async function init() {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+
+            if (code) {
+                try {
+                    document.getElementById('loginSection').style.display = 'none';
+                    const section = document.getElementById('gameSection');
+                    section.classList.remove('hidden');
+                    
+                    const loadingSection = document.getElementById('loadingSection');
+                    loadingSection.classList.remove('hidden');
+                    loadingSection.querySelector('.loading-text').textContent = 'Authenticating...';
+
+                    gameState.accessToken = await exchangeCodeForToken(code);
+                    gameState.user = await getUserProfile();
+
+                    document.getElementById('userName').textContent = `Welcome, ${gameState.user.display_name || gameState.user.email}!`;
+
+                    loadingSection.querySelector('.loading-text').textContent = 'Loading your top tracks...';
+                    gameState.topTracks = await getUserTopTracks();
+
+                    if (gameState.topTracks.length < NUM_CHOICES) {
+                        showMessage(`Need at least ${NUM_CHOICES} tracks with previews. Found: ${gameState.topTracks.length}`, 'error');
+                        loadingSection.classList.add('hidden');
+                        return;
+                    }
+
+                    // Clean URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    
+                    startGame();
+                } catch (error) {
+                    console.error('Initialization error:', error);
+                    showMessage('Authentication failed. Please try again.', 'error');
+                    logout();
+                }
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
